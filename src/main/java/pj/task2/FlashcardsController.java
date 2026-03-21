@@ -4,15 +4,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 @Controller
 public class FlashcardsController implements CommandLineRunner {
     private final EntryRepository repository;
+    private final FileService fileService;
     private final Scanner scanner = new Scanner(System.in);
 
-    public FlashcardsController(EntryRepository repository) {
+    public FlashcardsController(EntryRepository repository, FileService fileService) {
         this.repository = repository;
+        this.fileService = fileService;
     }
 
     private void handleAddWord() {
@@ -28,6 +31,7 @@ public class FlashcardsController implements CommandLineRunner {
         Entry entry = new Entry(english.toLowerCase(), polish.toLowerCase(), german.toLowerCase());
 
         repository.addEntry(entry);
+        fileService.saveWordToFile(entry);
     }
 
     private void handleDisplayWords() {
@@ -42,7 +46,7 @@ public class FlashcardsController implements CommandLineRunner {
             System.out.println("List is empty.Add words first.");
             return;
         }
-        int random = (int) (Math.random() * words.size());
+        int random = new Random().nextInt(words.size());
         Entry userWord = words.get(random);
 
         System.out.println("Translate this Polish word: " + userWord.getPolish());
@@ -71,7 +75,7 @@ public class FlashcardsController implements CommandLineRunner {
         System.out.println("----------Flashcards by s32876----------");
 
         while (running) {
-            System.out.println("Menu: \n 1. Add words \n 2.Display words \n 3. Test \n 4.Quit \n Enter your choice: ");
+            System.out.println("Menu: \n 1. Add words \n 2. Display words \n 3. Test \n 4. Quit \n Enter your choice: ");
             String response = scanner.nextLine();
 
             switch (response) {

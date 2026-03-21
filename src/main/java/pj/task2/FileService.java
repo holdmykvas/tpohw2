@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.nio.file.StandardOpenOption;
 
 
 @Service
@@ -32,6 +33,17 @@ public class FileService {
             }
         } catch (Exception e ) {
             System.err.println("File wasn't loaded: " + filename);
+        }
+    }
+
+    public void saveWordToFile(Entry entry) {
+        try {
+            String line = entry.getEnglish() + "," + entry.getPolish() + "," + entry.getGerman() + System.lineSeparator();
+
+            Files.writeString(Paths.get(filename), line, StandardOpenOption.APPEND);
+        }
+        catch (Exception e) {
+            System.err.println("Word wasn't saved!");
         }
     }
 }
