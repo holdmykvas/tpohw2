@@ -1,0 +1,9 @@
+spring:
+  banner:
+    location: "classpath:logo-app"
+
+pl:
+  edu:
+    pja:
+      tpo02:
+        filename: "words.csv"
