@@ -5,7 +5,7 @@ public class Entry {
     private String english;
     private String german;
 
-    public Entry(String polish,String english, String german) {
+    public Entry(String english,String polish, String german) {
         this.english = english;
         this.polish = polish;
         this.german = german;

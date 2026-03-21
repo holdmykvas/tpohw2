@@ -14,7 +14,6 @@ public class FileService {
     private final EntryRepository repository;
     private final String filename;
 
-
     public FileService(EntryRepository repository, @Value("${pl.edu.pja.tpo02.filename}") String filename) {
         this.repository = repository;
         this.filename = filename;
@@ -24,7 +23,7 @@ public class FileService {
     @PostConstruct
     public void readFiles() {
         try{
-            List<String> lines = Files.readAllLines(Paths.get("resources/words.csv"));
+            List<String> lines = Files.readAllLines(Paths.get(filename));
 
             for (String line : lines ){
                 String[] words = line.split("," );

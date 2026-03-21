@@ -6,4 +6,4 @@ pl:
   edu:
     pja:
       tpo02:
-        filename: "words.csv"
+        filename: "src/main/resources/words.csv"
