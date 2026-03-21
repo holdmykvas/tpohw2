@@ -1,19 +1,12 @@
 package pj.task2;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class EntryRepository {
-    private final List<Entry> entryList = new ArrayList<>();
+public interface EntryRepository extends JpaRepository<Entry,Long> {
 
-    public void addEntry(Entry entry) {
-        entryList.add(entry);
-    }
-
-    public List<Entry> getAllEntries() {
-        return entryList;
-    }
 }

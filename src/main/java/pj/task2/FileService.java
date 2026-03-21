@@ -23,27 +23,21 @@ public class FileService {
 
     @PostConstruct
     public void readFiles() {
-        try{
-            List<String> lines = Files.readAllLines(Paths.get(filename));
+        if (repository.count() == 0 ) {
+            System.out.println("Loading words from CSV.");
+            try {
+                List<String> lines = Files.readAllLines(Paths.get(filename));
 
-            for (String line : lines ){
-                String[] words = line.split("," );
-                Entry entry = new Entry (words[0],words[1],words[2]);
-                repository.addEntry(entry);
+                for (String line : lines) {
+                    String[] words = line.split(",");
+                    Entry entry = new Entry(words[0], words[1], words[2]);
+                    repository.save(entry);
+                }
+            } catch (Exception e) {
+                System.err.println("File wasn't loaded: " + filename);
             }
-        } catch (Exception e ) {
-            System.err.println("File wasn't loaded: " + filename);
-        }
-    }
-
-    public void saveWordToFile(Entry entry) {
-        try {
-            String line = entry.getEnglish() + "," + entry.getPolish() + "," + entry.getGerman() + System.lineSeparator();
-
-            Files.writeString(Paths.get(filename), line, StandardOpenOption.APPEND);
-        }
-        catch (Exception e) {
-            System.err.println("Word wasn't saved!");
+        } else {
+            System.out.println("Database has been initialized before.No changes made.");
         }
     }
 }

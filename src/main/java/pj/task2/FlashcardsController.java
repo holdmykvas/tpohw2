@@ -32,12 +32,11 @@ public class FlashcardsController implements CommandLineRunner {
 
         Entry entry = new Entry(english.toLowerCase(), polish.toLowerCase(), german.toLowerCase());
 
-        repository.addEntry(entry);
-        fileService.saveWordToFile(entry);
+        repository.save(entry);
     }
 
     private void handleDisplayWords() {
-        for (Entry entry : repository.getAllEntries()) {
+        for (Entry entry : repository.findAll()) {
             System.out.println("English: " + formatter.format(entry.getEnglish()) +
                             " | Polish: " + formatter.format(entry.getPolish()) +
                             " | German: " + formatter.format(entry.getGerman()));
@@ -45,7 +44,7 @@ public class FlashcardsController implements CommandLineRunner {
     }
 
     private void handleTest() {
-        List<Entry> words = repository.getAllEntries();
+        List<Entry> words = repository.findAll();
         if (words.isEmpty()) {
             System.out.println("List is empty.Add words first.");
             return;
