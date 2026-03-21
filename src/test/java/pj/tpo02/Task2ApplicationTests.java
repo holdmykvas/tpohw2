@@ -1,4 +1,4 @@
-package pj.task2;
+package pj.tpo02;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -4,9 +4,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Scanner;
+import java.nio.file.Paths;
+import java.util.List;
+
 
 @Service
 public class FileService {
@@ -23,7 +24,13 @@ public class FileService {
     @PostConstruct
     public void readFiles() {
         try{
-            List<String> lines = Files.readAllLines(resource.get)
+            List<String> lines = Files.readAllLines(Paths.get("resources/words.csv"));
+
+            for (String line : lines ){
+                String[] words = line.split("," );
+                Entry entry = new Entry (words[0],words[1],words[2]);
+                repository.addEntry(entry);
+            }
         } catch (Exception e ) {
             System.err.println("File wasn't loaded: " + filename);
         }
