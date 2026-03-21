@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface EntryRepository extends JpaRepository<Entry,Long> {
-
+    List<Entry> findByEnglishContainingIgnoreCaseOrPolishContainingIgnoreCaseOrGermanContainingIgnoreCase( String english,String polish, String german);
 }
