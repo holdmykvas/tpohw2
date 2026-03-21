@@ -11,11 +11,13 @@ import java.util.Scanner;
 public class FlashcardsController implements CommandLineRunner {
     private final EntryRepository repository;
     private final FileService fileService;
+    private final WordFormatter formatter;
     private final Scanner scanner = new Scanner(System.in);
 
-    public FlashcardsController(EntryRepository repository, FileService fileService) {
+    public FlashcardsController(EntryRepository repository, FileService fileService, WordFormatter formatter) {
         this.repository = repository;
         this.fileService = fileService;
+        this.formatter = formatter;
     }
 
     private void handleAddWord() {
@@ -36,7 +38,9 @@ public class FlashcardsController implements CommandLineRunner {
 
     private void handleDisplayWords() {
         for (Entry entry : repository.getAllEntries()) {
-            System.out.println("English: " + entry.getEnglish() + " | Polish: " + entry.getPolish() + " | German: " + entry.getGerman());
+            System.out.println("English: " + formatter.format(entry.getEnglish()) +
+                            " | Polish: " + formatter.format(entry.getPolish()) +
+                            " | German: " + formatter.format(entry.getGerman()));
         }
     }
 
