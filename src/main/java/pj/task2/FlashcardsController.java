@@ -39,7 +39,7 @@ public class FlashcardsController implements CommandLineRunner {
                      5. Modify a word\s
                      6. Delete a word\s
                      7. Quit\s
-                     Enter your choice:\s""");
+                    Enter your choice:\s""");
             String response = scanner.nextLine().trim();
 
             switch (response) {
@@ -152,7 +152,7 @@ public class FlashcardsController implements CommandLineRunner {
         System.out.println("Enter a word that you are looking for: ");
         String response = scanner.nextLine().trim();
 
-        List<Entry> results = repository.findByEnglishContainingIgnoreCaseOrPolishContainingIgnoreCaseOrGermanContainingIgnoreCase(response,response,response);
+        List<Entry> results = repository.searchWord(response);
 
         if(results.isEmpty()) {
             System.out.println("No matching word was found.");
@@ -165,7 +165,7 @@ public class FlashcardsController implements CommandLineRunner {
         System.out.println("Enter a word that you are looking for to modify: ");
         String word = scanner.nextLine().trim();
 
-        List<Entry> results = repository.findByEnglishContainingIgnoreCaseOrPolishContainingIgnoreCaseOrGermanContainingIgnoreCase(word,word,word);
+        List<Entry> results = repository.searchWord(word);
 
         if (results.isEmpty()) {
             System.out.println("No matching word was found.");

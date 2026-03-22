@@ -1,12 +1,19 @@
 package pj.task2;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface EntryRepository extends JpaRepository<Entry,Long> {
-    List<Entry> findByEnglishContainingIgnoreCaseOrPolishContainingIgnoreCaseOrGermanContainingIgnoreCase( String english,String polish, String german);
+public interface EntryRepository{
+    List<Entry> searchWord(String keyword);
+    public long count();
+    public void save(Entry entry);
+    public List<Entry> findAll();
+    public List<Entry> findAll(Sort sort);
+    public Optional<Entry> findById(Long id);
+    public boolean existsById(Long id);
+    public void deleteById(Long id);
+
 }
