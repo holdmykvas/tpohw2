@@ -1,5 +1,6 @@
 package pj.task2;
 
+import jakarta.persistence.Id;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
 
@@ -31,7 +32,7 @@ public class FlashcardsController implements CommandLineRunner {
         System.out.println("Enter a word in German: ");
         String german = scanner.nextLine();
 
-        Entry entry = new Entry(english.toLowerCase(), polish.toLowerCase(), german.toLowerCase());
+        Entry entry = new Entry(english, polish, german);
 
         repository.save(entry);
     }
@@ -114,6 +115,58 @@ public class FlashcardsController implements CommandLineRunner {
     }
 
     private void handleModify() {
+        System.out.println("Enter a word that you are looking for to modify: ");
+        String word = scanner.nextLine().trim();
+
+        List<Entry> results = repository.findByEnglishContainingIgnoreCaseOrPolishContainingIgnoreCaseOrGermanContainingIgnoreCase(word,word,word);
+
+        if (results.isEmpty()) {
+            System.out.println("No matching word was found.");
+            return;
+        } else {
+            for (Entry entry: results) {
+                System.out.println("Results for search: \n" +
+                        "ID: " + entry.getId() +
+                    " | English: " + formatter.format(entry.getEnglish()) +
+                    " | Polish: " + formatter.format(entry.getPolish()) +
+                    " | German: " + formatter.format(entry.getGerman()) + "\n") ;
+            }
+        }
+
+        Long id = results.getFirst().getId();
+        Entry entryToUpdate = repository.findById(id).orElse(null);
+
+        System.out.println("Which translation do you want to modify: \n " +
+                "1. English \n 2. Polish \n 3. German \n 4.All \n Enter your choice:");
+        String option = scanner.nextLine().trim();
+
+        switch(option) {
+            case "1":
+                System.out.println("Enter the word in English: ");
+                entryToUpdate.setEnglish(scanner.nextLine().trim().toLowerCase());
+                break;
+            case "2":
+                System.out.println("Enter the word in Polish: ");
+                entryToUpdate.setPolish(scanner.nextLine().trim().toLowerCase());
+                break;
+            case "3":
+                System.out.println("Enter the word in German: ");
+                entryToUpdate.setGerman(scanner.nextLine().trim().toLowerCase());
+                break;
+            case "4":
+                System.out.println("Enter the word in English: ");
+                entryToUpdate.setEnglish(scanner.nextLine().trim().toLowerCase());
+                System.out.println("Enter the word in Polish: ");
+                entryToUpdate.setPolish(scanner.nextLine().trim().toLowerCase());
+                System.out.println("Enter the word in German: ");
+                entryToUpdate.setGerman(scanner.nextLine().trim().toLowerCase());
+                break;
+            default:
+                System.out.println("Invalid option.");
+                return;
+        }
+
+        repository.save(entryToUpdate);
 
     }
 
@@ -124,8 +177,16 @@ public class FlashcardsController implements CommandLineRunner {
         System.out.println("----------Flashcards by s32876----------");
 
         while (running) {
-            System.out.println("Menu: \n 1. Add words \n 2. Display words \n 3. Test \n " +
-                    "4. Search the word \n 5. Modify a word \n 6. Delete a word \n 7. Quit \n Enter your choice: ");
+            System.out.println("""
+                    Menu:\s
+                     1. Add words\s
+                     2. Display words\s
+                     3. Test\s
+                     4. Search the word\s
+                     5. Modify a word\s
+                     6. Delete a word\s
+                     7. Quit\s
+                     Enter your choice:\s""");
             String response = scanner.nextLine().trim();
 
             switch (response) {
