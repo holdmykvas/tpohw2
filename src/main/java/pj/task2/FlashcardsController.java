@@ -2,6 +2,7 @@ package pj.task2;
 
 import jakarta.persistence.Id;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 
 import java.sql.SQLOutput;
@@ -20,6 +21,39 @@ public class FlashcardsController implements CommandLineRunner {
         this.repository = repository;
         this.fileService = fileService;
         this.formatter = formatter;
+    }
+
+    @Override
+    public void run(String[] args) throws Exception {
+        boolean running = true;
+
+        System.out.println("----------Flashcards by s32876----------");
+
+        while (running) {
+            System.out.println("""
+                    Menu:\s
+                     1. Add words\s
+                     2. Display words\s
+                     3. Test\s
+                     4. Search the word\s
+                     5. Modify a word\s
+                     6. Delete a word\s
+                     7. Quit\s
+                     Enter your choice:\s""");
+            String response = scanner.nextLine().trim();
+
+            switch (response) {
+                case "1": handleAddWord(); break;
+                case "2": handleDisplayWords(); break;
+                case "3": handleTest(); break;
+                case "4": handleSearch(); break;
+                case "5": handleModify(); break;
+                case "6": handleDeleteWord(); break;
+                case "7": running = false; break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
     }
 
     private void handleAddWord() {
@@ -43,15 +77,33 @@ public class FlashcardsController implements CommandLineRunner {
             System.out.println("The dictionary is empty");
             return;
         }
+        System.out.println("How would you like to sort your words? \n 1. By English \n 2. By Polish \n 3. By German \n 4. Default \n Enter your choice: ");
+        String langSortChoice = scanner.nextLine().trim();
 
+        System.out.println("Which direction should words be sorted? \n 1. Ascending (A-Z) \n 2. Descending (Z-A) \n Enter your choice: ");
+        String dirSortChoice = scanner.nextLine().trim();
 
-        for (Entry entry : repository.findAll()) {
-            System.out.println("ID: " + entry.getId() +
-                            " | English: " + formatter.format(entry.getEnglish()) +
-                            " | Polish: " + formatter.format(entry.getPolish()) +
-                            " | German: " + formatter.format(entry.getGerman()));
+        Sort.Direction direction = dirSortChoice.equals("2") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        String property;
+        switch(langSortChoice) {
+            case "1": property = "english"; break;
+            case "2": property = "polish"; break;
+            case "3": property = "german"; break;
+            case "4": property = "id"; break;
+            default:
+                System.out.println("Invalid option.");
+                property = "id";
+                return;
         }
+
+        Sort sort = Sort.by(direction,property);
+        List<Entry> sortedEntries = repository.findAll(sort);
+        printList(sortedEntries);
+
     }
+
+
 
     private void handleTest() {
         List<Entry> words = repository.findAll();
@@ -105,12 +157,7 @@ public class FlashcardsController implements CommandLineRunner {
         if(results.isEmpty()) {
             System.out.println("No matching word was found.");
         } else {
-            for (Entry entry: results) {
-                System.out.println("ID: " + entry.getId() +
-                        " | English: " + formatter.format(entry.getEnglish()) +
-                        " | Polish: " + formatter.format(entry.getPolish()) +
-                        " | German: " + formatter.format(entry.getGerman()) + "\n") ;
-            }
+            printList(results);
         }
     }
 
@@ -124,20 +171,19 @@ public class FlashcardsController implements CommandLineRunner {
             System.out.println("No matching word was found.");
             return;
         } else {
-            for (Entry entry: results) {
-                System.out.println("Results for search: \n" +
-                        "ID: " + entry.getId() +
-                    " | English: " + formatter.format(entry.getEnglish()) +
-                    " | Polish: " + formatter.format(entry.getPolish()) +
-                    " | German: " + formatter.format(entry.getGerman()) + "\n") ;
-            }
+            printList(results);
         }
 
         Long id = results.getFirst().getId();
         Entry entryToUpdate = repository.findById(id).orElse(null);
 
-        System.out.println("Which translation do you want to modify: \n " +
-                "1. English \n 2. Polish \n 3. German \n 4.All \n Enter your choice:");
+        System.out.println("""
+                Which translation do you want to modify:\s
+                 1. English\s
+                 2. Polish\s
+                 3. German\s
+                 4.All\s
+                Enter your choice:""");
         String option = scanner.nextLine().trim();
 
         switch(option) {
@@ -145,22 +191,28 @@ public class FlashcardsController implements CommandLineRunner {
                 System.out.println("Enter the word in English: ");
                 entryToUpdate.setEnglish(scanner.nextLine().trim().toLowerCase());
                 break;
+
             case "2":
                 System.out.println("Enter the word in Polish: ");
                 entryToUpdate.setPolish(scanner.nextLine().trim().toLowerCase());
                 break;
+
             case "3":
                 System.out.println("Enter the word in German: ");
                 entryToUpdate.setGerman(scanner.nextLine().trim().toLowerCase());
                 break;
+
             case "4":
                 System.out.println("Enter the word in English: ");
                 entryToUpdate.setEnglish(scanner.nextLine().trim().toLowerCase());
+
                 System.out.println("Enter the word in Polish: ");
                 entryToUpdate.setPolish(scanner.nextLine().trim().toLowerCase());
+
                 System.out.println("Enter the word in German: ");
                 entryToUpdate.setGerman(scanner.nextLine().trim().toLowerCase());
                 break;
+
             default:
                 System.out.println("Invalid option.");
                 return;
@@ -170,36 +222,15 @@ public class FlashcardsController implements CommandLineRunner {
 
     }
 
-    @Override
-    public void run(String[] args) throws Exception {
-        boolean running = true;
-
-        System.out.println("----------Flashcards by s32876----------");
-
-        while (running) {
-            System.out.println("""
-                    Menu:\s
-                     1. Add words\s
-                     2. Display words\s
-                     3. Test\s
-                     4. Search the word\s
-                     5. Modify a word\s
-                     6. Delete a word\s
-                     7. Quit\s
-                     Enter your choice:\s""");
-            String response = scanner.nextLine().trim();
-
-            switch (response) {
-                case "1": handleAddWord(); break;
-                case "2": handleDisplayWords(); break;
-                case "3": handleTest(); break;
-                case "4": handleSearch(); break;
-                case "5": handleModify(); break;
-                case "6": handleDeleteWord(); break;
-                case "7": running = false; break;
-                default:
-                    System.out.println("Invalid choice.");
-            }
+    //HELPERS
+    private void printList(List<Entry> entries) {
+        System.out.println("\n--- Dictionary ---");
+        for (Entry entry : entries) {
+            System.out.println("ID: " + entry.getId() +
+                    " | English: " + formatter.format(entry.getEnglish()) +
+                    " | Polish: " + formatter.format(entry.getPolish()) +
+                    " | German: " + formatter.format(entry.getGerman()));
         }
+        System.out.println();
     }
 }
